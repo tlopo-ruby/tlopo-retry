@@ -13,7 +13,17 @@ end
 module Tlopo::Retry
   LOGGER = Tlopo::LOGGER
   LOGGER.debug("#{self} loaded")
+  VALID_OPTS = [ :tries, :timeout, :interval, :fork, :cleanup]
+
+  def self.validate_opts(opts)
+    opts.keys.each do |k|
+      msg = "Option #{k} is invalid. Valid options: #{VALID_OPTS}"
+      raise RuntimeError.new msg unless VALID_OPTS.include? k
+    end
+  end 
+
   def self.retry(opts = {}, &block)
+    validate_opts opts
     is_fork = opts[:fork]
     return local(opts, &block) unless is_fork
     return child(opts, &block) if is_fork

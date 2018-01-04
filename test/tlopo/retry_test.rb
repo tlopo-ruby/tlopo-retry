@@ -4,6 +4,7 @@ require 'test_helper'
 # ensure it times out
 # ensure it forks
 # ensure it raises unknown option
+# ensure it calls cleanup
 
 class Tlopo::RetryTest < Minitest::Test
   def setup
@@ -33,7 +34,6 @@ class Tlopo::RetryTest < Minitest::Test
     e = assert_raises Timeout::Error do
       Tlopo::Retry.retry(timeout: 1) { sleep 2 }
     end
-    File.open('/tmp/1', 'w+') { |f| f.puts([e, e.class, e.message]) }
     assert_equal('execution expired', e.message)
   end
 
@@ -43,6 +43,26 @@ class Tlopo::RetryTest < Minitest::Test
     child_pid = Tlopo::Retry.retry(fork: true) { Process.pid }
     assert_kind_of Integer, child_pid
     refute_equal parent_pid, child_pid
+  end
+
+  def test_that_it_raises_unknown_opts
+    e = assert_raises RuntimeError do 
+      Tlopo::Retry.retry(unknown: 1) { nil }
+    end
+    assert_match 'unknown', e.message
+  end
+
+  def test_that_it_calls_cleanup
+    desired = 1
+    received = nil
+    begin
+      received = Tlopo::Retry.retry({
+        tries: 1,
+        cleanup: proc { received = desired }
+      }) { raise 'whatever' }
+    rescue
+    end
+    assert_equal desired, received
   end
 
 end
