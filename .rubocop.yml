@@ -15,6 +15,8 @@ Metrics/ParameterLists:
   CountKeywordArgs: false
 Metrics/CyclomaticComplexity:
   Max: 8
+  Exclude: 
+    - lib/tlopo/retry.rb
 Metrics/ModuleLength:
   Enabled: false
 Style/MethodCallWithArgsParentheses:
@@ -22,4 +24,7 @@ Style/MethodCallWithArgsParentheses:
   IgnoredMethods: [require, raise, include, attr_reader, refute, assert]
   Exclude: [Gemfile, Rakefile, kubeclient.gemspec]
 Security/MarshalLoad:
-  Exclude: [test/**/*]
+  Exclude: 
+    - test/**/*
+    - lib/tlopo/retry.rb
+
