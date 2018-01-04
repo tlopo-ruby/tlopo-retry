@@ -1,39 +1,37 @@
-require "tlopo/retry/version"
+require 'tlopo/retry/version'
 require 'logger'
 require 'timeout'
 
 module Tlopo
-  LOGGER ||= proc do 
+  LOGGER ||= proc do
     logger = Logger.new(ENV['TLOPO_LOG_LEVEL'] ? STDERR : '/dev/null')
-    logger.level = ENV['TLOPO_LOG_LEVEL'] ? "#{ENV['TLOPO_LOG_LEVEL'].upcase}" :  Logger::ERROR
+    logger.level = ENV['TLOPO_LOG_LEVEL'] ? ENV['TLOPO_LOG_LEVEL'].upcase.to_s : Logger::ERROR
     logger
   end.call
-  
 end
 
-module Tlopo::Retry 
+module Tlopo::Retry
   LOGGER = Tlopo::LOGGER
-  LOGGER.debug "#{self} loaded"
-  def self.retry(opts={},&block)
+  LOGGER.debug("#{self} loaded")
+  def self.retry(opts = {}, &block)
     is_fork = opts[:fork]
-    return local(opts,&block) unless is_fork
-    return child(opts,&block) if is_fork
+    return local(opts, &block) unless is_fork
+    return child(opts, &block) if is_fork
   end
 
-  private 
-  def self.child(opts={},&block)
+  def self.child(opts = {}, &block)
     read, write = IO.pipe
-  
+
     pid = fork do
       read.close
-      begin 
-        result = local(opts,&block)
-        Marshal.dump({result: result, error: nil}, write)
-      rescue => e
-        Marshal.dump({result:nil, error: e},write)
+      begin
+        result = local(opts, &block)
+        Marshal.dump({ result: result, error: nil }, write)
+      rescue StandardError => e
+        Marshal.dump({ result: nil, error: e }, write)
       end
     end
-  
+
     write.close
     result = Marshal.load(read.read)
     Process.wait(pid)
@@ -41,30 +39,29 @@ module Tlopo::Retry
     result[:result]
   end
 
-  def self.local(opts={},&block)
+  def self.local(opts = {})
     tries = opts[:tries] || 3
     timeout = opts[:timeout] || 0
     interval = opts[:interval] || 1
     desc = opts[:desc]
-    cleanup = opts[:cleanup] 
-    LOGGER.debug "opts: #{opts}"
-    LOGGER.debug "tries: #{tries}"
+    cleanup = opts[:cleanup]
+    LOGGER.debug("opts: #{opts}")
+    LOGGER.debug("tries: #{tries}")
     count = 0
     begin
       count += 1
-      Timeout::timeout(timeout) { yield }
-    rescue => e 
-      unless count > tries 
-        msg = "#{self} Retrying to #{desc} #{count} out of #{tries}"
-        LOGGER.info msg if desc
-        LOGGER.debug "#{self} Calling cleanup" if cleanup
-        cleanup.call if cleanup
-        sleep interval
-        retry 
-      else
+      Timeout.timeout(timeout) { yield }
+    rescue StandardError => e
+      if count > tries
         raise e
+      else
+        msg = "#{self} Retrying to #{desc} #{count} out of #{tries}"
+        LOGGER.info(msg) if desc
+        LOGGER.debug("#{self} Calling cleanup") if cleanup
+        cleanup.call if cleanup
+        sleep(interval)
+        retry
       end
     end
   end
 end
-
