@@ -33,11 +33,20 @@ end
 ```
 Full options
 ```ruby
+require 'logger'
+require 'socket'
+
+# Enable logging
+ENV['TLOPO_LOG_LEVEL'] = 'debug' 
+
+require 'tlopo/retry'
+
 Tlopo::Retry.retry({
   desc: 'check if port 8080 is open on www.google.co.uk',
-  tries: 5,
-  interval: 30,
-  timeout: 5
+  tries: 2,
+  interval: 5,
+  timeout: 1,
+  cleanup: proc { p 'Run your cleanup code here'}
 }) do 
   TCPSocket.new('www.google.co.uk','8080').close
 end
