@@ -1,5 +1,11 @@
-sudo: false
 language: ruby
 rvm:
-  - 2.3.0
-before_install: gem install bundler -v 1.13.2
+  - "2.2"
+  - "2.3.0"
+  - "2.4.0"
+sudo: false
+cache: bundler
+script: bundle exec rake $TASK
+env:
+ - TASK=test
+ - TASK=rubocop
