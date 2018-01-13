@@ -1,7 +1,7 @@
 # tlopo-retry
 [![Gem Version](https://badge.fury.io/rb/tlopo-retry.svg)](http://badge.fury.io/rb/tlopo-retry)
 [![Build Status](https://travis-ci.org/tlopo-ruby/tlopo-retry.svg?branch=master)](https://travis-ci.org/tlopo-ruby/tlopo-retry)
-[![Code Climate](http://img.shields.io/codeclimate/github/tlopo-ruby/tlopo-retry.svg)](https://codeclimate.com/github/tlopo-ruby/tlopo-retry)
+[![Code Climate](https://codeclimate.com/github/tlopo-ruby/tlopo-retry/badges/gpa.svg)](https://codeclimate.com/github/tlopo-ruby/tlopo-retry)
 [![Dependency Status](https://gemnasium.com/tlopo-ruby/tlopo-retry.svg)](https://gemnasium.com/tlopo-ruby/tlopo-retry)
 
 A reusable retry mechanism which supports timeout, cleanup and fork
