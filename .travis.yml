@@ -9,3 +9,4 @@ script: bundle exec rake $TASK
 env:
  - TASK=test
  - TASK=rubocop
+ - TASK=test_with_coveralls
