@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/tlopo-ruby/tlopo-retry.svg?branch=master)](https://travis-ci.org/tlopo-ruby/tlopo-retry)
 [![Code Climate](https://codeclimate.com/github/tlopo-ruby/tlopo-retry/badges/gpa.svg)](https://codeclimate.com/github/tlopo-ruby/tlopo-retry)
 [![Dependency Status](https://gemnasium.com/tlopo-ruby/tlopo-retry.svg)](https://gemnasium.com/tlopo-ruby/tlopo-retry)
+[![Coverage Status](https://coveralls.io/repos/github/tlopo-ruby/tlopo-retry/badge.svg?branch=master)](https://coveralls.io/github/tlopo-ruby/tlopo-retry?branch=master)
 
 A reusable retry mechanism which supports timeout, cleanup and fork
 
